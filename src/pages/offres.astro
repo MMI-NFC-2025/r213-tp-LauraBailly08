@@ -40,49 +40,92 @@ const offres = [
 ---
 
 <Layout titre="Offres">
-        <h1>Offres</h1> 
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
 
-<div>
-    {
-        offres.map(offre => (
-            <div class="offre" data-favori={offre.favori.toString()}>
-                <OffreCard offre={offre} />
-            </div>
-        ))
+  <style>
+    .font-cute {
+      font-family: 'Nunito', sans-serif;
     }
-</div>
-<button id="favori-button" class="bg-slate-600 rounded-lg text-white p-2 mb-4">
-            Afficher les favoris
-        </button>
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <div class="font-cute min-h-screen bg-rose-50 p-8">
+    
+    <div class="max-w-6xl mx-auto mb-10 text-center">
+      <h1 class="text-5xl font-extrabold text-rose-500 mb-6 drop-shadow-sm">
+         Nos Offres 
+      </h1>
+      
+      <p class="text-rose-400 mb-8 text-lg font-medium">
+         ˚₊‧꒰ა Les favoris ໒꒱ ‧₊˚
+      </p>
+
+      <button 
+        id="favori-button" 
+        class="group relative inline-flex items-center justify-center px-8 py-3 
+               bg-white text-rose-500 font-bold text-lg rounded-full 
+               border-2 border-rose-200 shadow-[0_4px_0_rgb(253,164,175)] 
+               active:shadow-none active:translate-y-[4px] 
+               transition-all duration-200 ease-in-out hover:bg-rose-50"
+      >
+        <span class="mr-2 group-hover:scale-110 transition-transform">&lt;3</span>
+        <span id="btn-text">Afficher les favoris</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {
+        offres.map(offre => (
+          <div class="offre transition-all duration-300 hover:-translate-y-2" data-favori={offre.favori.toString()}>
+            <div class="h-full bg-white rounded-3xl p-4 shadow-lg shadow-rose-100/50 border border-rose-100">
+               <OffreCard offre={offre} />
+            </div>
+          </div>
+        ))
+      }
+    </div>
 
 
-<script>
+  <script>
     const button = document.getElementById('favori-button');
+    const btnText = document.getElementById('btn-text');
     let showOnlyFavorites = false;
 
     button?.addEventListener('click', () => {
-        showOnlyFavorites = !showOnlyFavorites;
-        const offres = document.querySelectorAll('.offre') as NodeListOf<HTMLElement>;
+      showOnlyFavorites = !showOnlyFavorites;
+      const offres = document.querySelectorAll('.offre');
+      let visibleCount = 0;
 
-        offres.forEach(offre => {
-            const isFavori = offre.dataset.favori === 'true';
-            if (showOnlyFavorites && !isFavori) {
-                offre.style.display = 'none';
-            } else {
-                offre.style.display = '';
-            }
-        });
+      offres.forEach(offre => {
+        const el = offre as HTMLElement; 
+        const isFavori = el.dataset.favori === 'true';
 
-        if (button) {
-            button.textContent = showOnlyFavorites 
-                ? 'Afficher tout' 
-                : 'Afficher les favoris';
+        if (showOnlyFavorites && !isFavori) {
+          el.style.display = 'none';
+        } else {
+          el.style.display = '';
+          el.classList.add('fade-in'); 
+          visibleCount++;
+          
+         
+          setTimeout(() => el.classList.remove('fade-in'), 500);
         }
+      });
+
+      if (btnText) {
+        btnText.textContent = showOnlyFavorites 
+          ? 'Afficher tout' 
+          : 'Afficher les favoris';
+      }
     });
-</script>
+  </script>
 
-    </Layout>
-
-
- 
- 
+</Layout>
