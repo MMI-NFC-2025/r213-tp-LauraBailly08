@@ -1,19 +1,21 @@
 ---
+import Offres from "../pages/offres.astro";
+import PbImages from "./PbImages.astro";
+
 const { offre } = Astro.props;
 ---
 
 <div class="card">
-    <img src={offre.imgUrl} alt={offre.nomMaison} />
+    
 
     <h2>{offre.nomMaison}</h2>
-    <p>{offre.adresse}</p>
+    <PbImages record={offre} recordImage={offre.Image[0]} />   
+    <PbImages record={offre} recordImage={offre.Image[1]} />   
+    <PbImages record={offre} recordImage={offre.Image[2]} />   
+    
+    
+    <p>{offre.adresse}</p
 
-    <ul>
-        <li>Chambres : {offre.nbChambres}</li>
-        <li>Salles de bain : {offre.nbSdb}</li>
-        <li>Surface : {offre.surface} m²</li>
-        <li>Prix : {offre.prix} €</li>
-    </ul>
 
     {offre.favori && <span class="favori">★ Favori</span>}
 </div>
