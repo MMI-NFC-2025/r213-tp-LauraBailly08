@@ -11,6 +11,8 @@ const imageURL = await getImageUrl(record, recordImage);
     <Image
         src={imageURL}
         alt={record.nomMaison || 'Image'}
+        width={400}
+        height={300}
         inferSize={true}
     />
 }
