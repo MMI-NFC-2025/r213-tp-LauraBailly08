@@ -1,5 +1,4 @@
 ---
-import Offres from "../pages/index.astro";
 import PbImages from "./PbImages.astro";
 
 const { offre } = Astro.props;
@@ -14,7 +13,9 @@ const { offre } = Astro.props;
     <PbImages record={offre} recordImage={offre.Image[2]} />   
     
     
-    <p>{offre.adresse}</p
+    <p>{offre.adresse}</p>
+    <a href={`/offres/${offre.id}`}>Voir plus</a>
+
 
 
     {offre.favori && <span class="favori">★ Favori</span>}
