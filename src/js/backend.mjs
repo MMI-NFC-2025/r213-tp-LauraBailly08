@@ -25,3 +25,32 @@ export async function getOffre(id) {
 export async function getImageUrl(record, recordImage) {
     return db.files.getURL(record, recordImage);
 }
+
+export async function filterByPrix(minPrix, maxPrix) {
+    try {
+        const data = await db.collection('Maison').getFullList({
+            sort: '-created',
+            filter: `Prix >= ${minPrix} && Prix <= ${maxPrix}`
+        });
+        return data;
+    } catch (error) {
+        console.log('Une erreur est survenue lors du filtrage par prix', error);
+        return [];
+    }
+}
+
+export async function addOffre(house) {
+    try {
+        await db.collection('maison').create(house);
+        return {
+            success: true,
+            message: 'Offre ajoutée avec succès'
+        };
+    } catch (error) {
+        console.log('Une erreur est survenue en ajoutant la maison', error);
+        return {
+            success: false,
+            message: 'Une erreur est survenue en ajoutant la maison'
+        };
+    }
+}

@@ -2,9 +2,27 @@
 import Header from "../../components/Header.astro";
 import Layout from "../../layouts/Layout.astro";
 import OffreCard from "../../components/OffreCard.astro";
-import { getOffres } from "../../js/backend.mjs";
-      
-  const offres = await getOffres()
+import { getOffres, filterByPrix } from "../../js/backend.mjs";  
+  let offres = await getOffres();
+  let message = '';
+if (Astro.request.method === "POST") {
+    const data = await Astro.request.formData();
+    const minPrix = parseInt(data.get("minPrix") as string);
+    const maxPrix = parseInt(data.get("maxPrix") as string);
+
+    if (minPrix > 0 && maxPrix > 0 && maxPrix > minPrix) {
+        offres = await filterByPrix(minPrix, maxPrix);
+        if (offres.length === 0) {
+            message = `Pas d'offres entre ${minPrix}€ et ${maxPrix}€`;
+        } else {
+            message = `Liste des offres entre ${minPrix}€ et ${maxPrix}€`;
+        }
+    } else {
+        message = "Veuillez entrer des valeurs valides pour le prix.";
+    }
+} else {
+    offres = await getOffres();
+}
 ---
 
 <Layout titre="Offres">
@@ -42,7 +60,7 @@ import { getOffres } from "../../js/backend.mjs";
           class="group relative inline-flex items-center justify-center px-8 py-3
                  bg-white text-rose-500 font-bold text-lg rounded-full
                  border-2 border-rose-200 shadow-[0_4px_0_rgb(253,164,175)]
-                 active:shadow-none active:translate-y-[4px]
+                 active:shadow-none active:translate-y-1
                  transition-all duration-200 ease-in-out hover:bg-rose-50"
         >
           <span class="mr-2 group-hover:scale-110 transition-transform">&lt;3</span>
@@ -54,7 +72,7 @@ import { getOffres } from "../../js/backend.mjs";
         class="group relative inline-flex items-center justify-center px-8 py-3 
                bg-white text-rose-500 font-bold text-lg rounded-full 
                border-2 border-rose-200 shadow-[0_4px_0_rgb(253,164,175)] 
-               active:shadow-none active:translate-y-[4px] 
+               active:shadow-none active:translate-y-1 
                transition-all duration-200 ease-in-out hover:bg-rose-50"
       >
         <span class="mr-2 group-hover:scale-110 transition-transform">&lt;3</span>
@@ -109,5 +127,11 @@ import { getOffres } from "../../js/backend.mjs";
     });
     
   </script>
+
+  <form action="/offres" method="POST">
+    <input type="number" name="minPrix" placeholder="Prix minimum" />
+    <input type="number" name="maxPrix" placeholder="Prix maximum" />
+    <input type="submit" value="Filtrer par prix" />
+</form>
 
 </Layout>
