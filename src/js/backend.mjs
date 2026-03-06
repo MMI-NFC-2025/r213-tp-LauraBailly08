@@ -54,3 +54,24 @@ export async function addOffre(house) {
         };
     }
 }
+
+export async function getAgent(id) {
+    // Fetch agent data from your backend/API
+    // Example implementation:
+    const response = await fetch(`/api/agents/${id}`);
+    if (!response.ok) return null;
+    return await response.json();
+}
+
+export async function getOffreByAgent(agentId) {
+    try {
+        const data = await db.collection('Maison').getFullList({
+            sort: '-created',
+            filter: `agent = "${agentId}"`
+        });
+        return data;
+    } catch (error) {
+        console.log('Une erreur est survenue en lisant les maisons de l\'agent', error);
+        return [];
+    }
+}

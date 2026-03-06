@@ -1,0 +1,237 @@
+---
+const { offre } = Astro.props;
+import PbImage from "./PbImages.astro";
+---
+
+<div class="card-modern group">
+    <div class="card-image-container">
+        <PbImage record={offre} recordImage={offre.images[0]} />
+        <button class="favoriteButton" data-offre={JSON.stringify(offre)}>
+            <img
+                class="favorite-icon"
+                src={offre.favori ? "/favorite_filled.svg" : "/favorite.svg"}
+                alt="Favorite Icon"
+            />
+        </button>
+    </div>
+
+    <div class="card-content">
+        <h3 class="card-title">{offre.nom_maison}</h3>
+
+        {offre.favori && <span class="badge-favori">★ Favori</span>}
+
+        <div class="card-details">
+            {
+                offre.prix && (
+                    <p class="card-price">
+                        {offre.prix}€<span class="card-period">/mois</span>
+                    </p>
+                )
+            }
+            {offre.surface && <p class="card-info">📐 {offre.surface} m²</p>}
+        </div>
+
+        <a href={`/offres/${offre.id}`} class="card-link">
+            Voir les détails
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </a>
+    </div>
+</div>
+
+<style>
+    .card-modern {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-modern:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-image-container {
+        position: relative;
+        width: 100%;
+        height: 240px;
+        overflow: hidden;
+        background: #f0f0f0;
+    }
+
+    .card-image-container :global(img) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .card-modern:hover .card-image-container :global(img) {
+        transform: scale(1.1);
+    }
+
+    .favoriteButton {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: none;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+    }
+
+    .favoriteButton:hover {
+        transform: scale(1.1);
+        background: white;
+    }
+
+    .favoriteButton:active {
+        transform: scale(0.95);
+    }
+
+    .favorite-icon {
+        width: 24px;
+        height: 24px;
+        transition: transform 0.3s ease;
+    }
+
+    .favoriteButton:hover .favorite-icon {
+        transform: scale(1.1);
+    }
+
+    .card-content {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        flex: 1;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    .badge-favori {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        color: #333;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        width: fit-content;
+        box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+    }
+
+    .card-details {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: auto;
+    }
+
+    .card-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2563eb;
+        margin: 0;
+    }
+
+    .card-period {
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: #6b7280;
+    }
+
+    .card-info {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .card-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        padding: 12px 0;
+        transition: all 0.3s ease;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 8px;
+    }
+
+    .card-link:hover {
+        color: #1d4ed8;
+        gap: 12px;
+    }
+
+    .card-link svg {
+        transition: transform 0.3s ease;
+    }
+
+    .card-link:hover svg {
+        transform: translateX(4px);
+    }
+</style>
+
+<script>
+    //@ts-nocheck
+    import { setFavori } from "../../backend.mjs";
+    const favoriteButtons = document.querySelectorAll(".favoriteButton");
+
+    favoriteButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const offreData = JSON.parse(button.dataset.offre || "{}");
+            const newFavori = !offreData.favori;
+
+            setFavori(offreData);
+
+            const favIcon = button.querySelector(".favorite-icon");
+            if (favIcon) {
+                favIcon.src = newFavori
+                    ? "/favorite_filled.svg"
+                    : "/favorite.svg";
+            }
+            offreData.favori = newFavori;
+            button.dataset.offre = JSON.stringify(offreData);
+        });
+    });
+</script>
